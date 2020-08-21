@@ -23,11 +23,12 @@ when isMainModule:
   # during dev, read it from the disk
   else:
     var sf = tsf_load_filename(paramidi_soundfonts.getSoundFontPath("generaluser.sf2"))
-  tsf_set_output(sf, TSF_MONO, common.sampleRate, 0)
-  var res = render[cshort](compile(score), soundFont = sf, sampleRate = common.sampleRate)
+  const sampleRate = 44100
+  tsf_set_output(sf, TSF_MONO, sampleRate, 0)
+  var res = render[cshort](compile(score), soundFont = sf, sampleRate = sampleRate)
   const padding = 500f # add a half second so it doesn't cut off abruptly
-  common.writeFile("output.wav", res.data, res.data.len.uint)
+  common.writeFile("output.wav", res.data, res.data.len.uint32, sampleRate)
   common.play("output.wav", int(res.seconds * 1000f + padding))
   # if you want to avoid writing to the disk, do this instead:
-  #let wav = common.writeMemory(res.data, res.data.len.uint)
+  #let wav = common.writeMemory(res.data, res.data.len.uint32, sampleRate)
   #common.play(wav, int(res.seconds * 1000f + padding))
