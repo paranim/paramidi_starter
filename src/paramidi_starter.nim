@@ -22,7 +22,8 @@ when isMainModule:
     var sf = tsf_load_memory(soundfont.cstring, soundfont.len.cint)
   # during dev, read it from the disk
   else:
-    var sf = tsf_load_filename(paramidi_soundfonts.getSoundFontPath("generaluser.sf2"))
+    let path = paramidi_soundfonts.getSoundFontPath("generaluser.sf2")
+    var sf = tsf_load_filename(path.cstring)
   # render the score
   const sampleRate = 44100
   tsf_set_output(sf, TSF_MONO, sampleRate, 0)
@@ -34,7 +35,7 @@ when isMainModule:
     padding = 500f # add a half second so it doesn't cut off abruptly
   when writeToDisk:
     common.writeFile("output.wav", res.data, res.data.len.uint32, sampleRate)
-    common.play("output.wav", int(res.seconds * 1000f + padding))
+    doAssert common.play("output.wav", int(res.seconds * 1000f + padding))
   else:
     let wav = common.writeMemory(res.data, res.data.len.uint32, sampleRate)
-    common.play(wav, int(res.seconds * 1000f + padding))
+    doAssert common.play(wav, int(res.seconds * 1000f + padding))
